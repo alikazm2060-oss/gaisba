@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<title>مشغل Fox & Anis</title>
+<style>
+:root{color-scheme:dark;--bg:#08111f;--panel:#111d30;--panel2:#17263c;--gold:#f5c451;--text:#f4f7fb;--muted:#9eacc1;--line:#263650;--green:#4ade80;--red:#fb7185}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172b49 0,#08111f 58%);color:var(--text);font-family:Tahoma,Arial,sans-serif;min-height:100vh}
+.wrap{max-width:1100px;margin:auto;padding:22px 16px 40px}.head{display:flex;align-items:center;gap:14px;margin-bottom:20px}.logo{width:54px;height:54px;border-radius:16px;background:linear-gradient(145deg,#ffe08a,#b98217);display:grid;place-items:center;color:#152033;font-size:23px;font-weight:900;box-shadow:0 8px 28px #0005}.head h1{font-size:clamp(22px,4vw,32px);margin:0 0 5px}.head p{margin:0;color:var(--muted);font-size:13px}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(270px,.85fr);gap:18px}.panel{background:linear-gradient(180deg,#121f33ee,#0e1929ee);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 18px 45px #0003}.playerbox{padding:14px}.screen{background:#000;border-radius:14px;overflow:hidden;aspect-ratio:16/9;display:grid;place-items:center;position:relative}.screen video{width:100%;height:100%;object-fit:contain;background:#000}.placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;background:radial-gradient(ellipse,#182842,#02050a)}.playicon{width:62px;height:62px;border:1px solid #f5c45199;border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:26px;margin-bottom:14px}.placeholder strong{font-size:18px}.placeholder span{font-size:12px;color:var(--muted);margin-top:7px}.now{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 3px 3px}.now h2{font-size:18px;margin:0 0 5px}.now p{font-size:12px;color:var(--muted);margin:0;overflow-wrap:anywhere}.pill{border:1px solid var(--line);padding:7px 10px;border-radius:999px;font-size:11px;color:var(--muted);white-space:nowrap}.controls{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.btn{border:1px solid var(--line);border-radius:11px;padding:11px 14px;background:var(--panel2);color:var(--text);font:inherit;font-size:13px;cursor:pointer}.btn.primary{background:var(--gold);color:#1a2230;border-color:var(--gold);font-weight:bold}.btn:hover{filter:brightness(1.12)}.note{font-size:12px;line-height:1.8;color:var(--muted);padding:0 4px;margin-top:12px}
+.listpanel{padding:15px}.listhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.listhead h3{margin:0;font-size:17px}.count{font-size:11px;color:var(--gold);background:#f5c45114;border:1px solid #f5c45144;padding:5px 9px;border-radius:999px}.search{width:100%;background:#091322;border:1px solid var(--line);border-radius:11px;padding:12px;color:var(--text);font:inherit;outline:none;margin-bottom:12px}.search:focus{border-color:var(--gold)}.groups{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}.group{font:inherit;font-size:12px;border:1px solid var(--line);background:transparent;color:var(--muted);padding:7px 10px;border-radius:9px;cursor:pointer}.group.active{background:#f5c4511a;border-color:#f5c45199;color:var(--gold)}.channels{display:flex;flex-direction:column;gap:7px;max-height:520px;overflow:auto;padding-left:2px}.channel{width:100%;display:flex;align-items:center;gap:10px;text-align:right;border:1px solid transparent;background:#0a1525;border-radius:12px;padding:11px;cursor:pointer;color:var(--text);font:inherit}.channel:hover{background:#17263c}.channel.selected{border-color:#f5c45199;background:#30281777}.num{width:35px;height:35px;flex-shrink:0;border-radius:10px;background:#1a2b43;display:grid;place-items:center;color:var(--gold);font-size:12px;font-weight:bold}.chname{font-size:13px;font-weight:bold}.churl{display:block;font-size:10px;color:var(--muted);direction:ltr;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px;margin-top:4px}.status{font-size:12px;color:var(--muted);line-height:1.8;margin-top:12px;min-height:42px}.status.error{color:var(--red)}.status.ok{color:var(--green)}.footer{text-align:center;color:#77869c;font-size:11px;margin-top:18px;line-height:1.8}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.channels{max-height:360px}.wrap{padding:17px 11px 30px}.head{margin-bottom:15px}.playerbox{padding:10px}.now{align-items:flex-start}.pill{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div class="logo">▶</div>
+    <div><h1>مشغل Fox &amp; Anis</h1><p>مشغل تجريبي لروابط البث الموجودة في ملف M3U</p></div>
+  </header>
+  <main class="layout">
+    <section class="panel playerbox">
+      <div class="screen">
+        <video id="video" controls playsinline autoplay></video>
+        <div class="placeholder" id="placeholder">
+          <div class="playicon">▶</div><strong>اختر بثاً من القائمة</strong>
+          <span>سيبدأ التشغيل هنا إذا كان الرابط مدعوماً ويعمل</span>
+        </div>
+      </div>
+      <div class="now">
+        <div><h2 id="currentName">لم يتم اختيار بث</h2><p id="currentUrl">اختر أحد الروابط من القائمة الجانبية</p></div>
+        <span class="pill" id="format">جاهز للتشغيل</span>
+      </div>
+      <div class="controls">
+        <button class="btn primary" id="playBtn">▶ تشغيل المحدد</button>
+        <button class="btn" id="stopBtn">■ إيقاف</button>
+        <button class="btn" id="openBtn">↗ فتح الرابط</button>
+        <button class="btn" id="copyBtn">نسخ الرابط</button>
+      </div>
+      <div id="status" class="status">ملاحظة: قد لا تعمل بعض الروابط داخل المتصفح بسبب انتهاء البث أو حظر CORS أو لأن الخادم يستخدم HTTP غير آمن.</div>
+      <p class="note">إذا ظهر خطأ، جرّب رابطاً آخر. روابط HTTP قد لا تعمل داخل صفحة مستضافة على HTTPS، وقد تحتاج بعض أنواع البث إلى تطبيق يدعم صيغة المصدر.</p>
+    </section>
+    <aside class="panel listpanel">
+      <div class="listhead"><h3>قائمة البثوث</h3><span class="count" id="count">17 رابطاً</span></div>
+      <input id="search" class="search" type="search" placeholder="ابحث عن اسم البث...">
+      <div class="groups">
+        <button class="group active" data-group="all">الكل</button>
+        <button class="group" data-group="fox">FoxFM</button>
+        <button class="group" data-group="anis">AnisFM</button>
+      </div>
+      <div class="channels" id="channels"></div>
+    </aside>
+  </main>
+  <div class="footer">مشغل محلي تجريبي • لا يستضيف البثوث ولا يغيّر مصادرها</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.min.js"></script>
+<script>
+const streams = [
+ {name:"FoxFm1",url:"https://foxfm.xyz/4K-1/mpegts",group:"fox"},
+ {name:"FoxFm2",url:"https://foxfm.xyz/4K-2/mpegts",group:"fox"},
+ {name:"FoxFm3",url:"https://foxfm.xyz/4K-3/mpegts",group:"fox"},
+ {name:"FoxFm4",url:"https://foxfm.xyz/4K-4/mpegts",group:"fox"},
+ {name:"Anis1",url:"http://anisfm.pp.ua/1",group:"anis"},
+ {name:"Anis1Low",url:"http://anisfm.pp.ua/1L",group:"anis"},
+ {name:"Anis2",url:"http://anisfm.pp.ua/2",group:"anis"},
+ {name:"Anis2Low",url:"http://anisfm.pp.ua/2L",group:"anis"},
+ {name:"Anis3",url:"http://anisfm.pp.ua/3",group:"anis"},
+ {name:"Anis3Low",url:"http://anisfm.pp.ua/3L",group:"anis"},
+ {name:"Anis4",url:"http://anisfm.pp.ua/4",group:"anis"},
+ {name:"Anis4Low",url:"http://anisfm.pp.ua/4L",group:"anis"},
+ {name:"Anis5",url:"http://anisfm.pp.ua/5",group:"anis"},
+ {name:"Anis5Low",url:"http://anisfm.pp.ua/5L",group:"anis"},
+ {name:"AnisMax1",url:"http://anisfm.pp.ua/Mx1",group:"anis"},
+ {name:"AnisMax2",url:"http://anisfm.pp.ua/Mx2",group:"anis"},
+ {name:"AnisMax3",url:"http://anisfm.pp.ua/MxFR",group:"anis"}
+];
+const $ = id => document.getElementById(id);
+let selected = 0, group = "all", player = null;
+const video = $("video");
+function setStatus(msg,kind=""){ $("status").textContent=msg; $("status").className="status "+kind; }
+function render(){
+ const q=$("search").value.trim().toLowerCase();
+ const items=streams.map((s,i)=>({...s,i})).filter(s=>(group==="all"||s.group===group)&&s.name.toLowerCase().includes(q));
+ $("channels").innerHTML="";
+ items.forEach(s=>{
+   const b=document.createElement("button"); b.className="channel"+(s.i===selected?" selected":"");
+   const n=document.createElement("span");n.className="num";n.textContent=String(s.i+1).padStart(2,"0");
+   const info=document.createElement("span");info.style.minWidth="0";info.style.flex="1";
+   const name=document.createElement("span");name.className="chname";name.textContent=s.name;
+   const url=document.createElement("span");url.className="churl";url.textContent=s.url;
+   info.append(name,url);b.append(n,info);b.onclick=()=>{selected=s.i;render();playSelected();};$("channels").append(b);
+ });
+ $("count").textContent=items.length+" رابط";
+}
+function destroyPlayer(){
+ if(player){try{player.pause();player.unload();player.detachMediaElement();player.destroy();}catch(e){}player=null;}
+ video.pause();video.removeAttribute("src");video.load();
+}
+function playSelected(){
+ const s=streams[selected]; if(!s)return;
+ destroyPlayer();
+ $("placeholder").style.display="none";
+ $("currentName").textContent=s.name;$("currentUrl").textContent=s.url;
+ $("format").textContent=s.url.includes("/mpegts")?"MPEG-TS":"بث مباشر";
+ setStatus("جارٍ محاولة تشغيل "+s.name+" ...");
+ // Try mpegts.js for the explicit MPEG-TS endpoints; otherwise let the browser try the source directly.
+ if(s.url.includes("/mpegts") && window.mpegts && mpegts.isSupported()){
+   try{
+     player=mpegts.createPlayer({type:"mpegts",isLive:true,url:s.url},{enableStashBuffer:false});
+     player.attachMediaElement(video);
+     player.on(mpegts.Events.ERROR,(type,detail,info)=>setStatus("تعذر تشغيل البث. قد يكون الرابط متوقفاً أو يمنع الخادم التشغيل من هذا الموقع (CORS).","error"));
+     player.load();video.play().then(()=>setStatus("تم إرسال أمر التشغيل. إذا بقيت الشاشة سوداء فقد يكون المصدر غير متاح.","ok")).catch(()=>setStatus("اضغط زر التشغيل داخل الفيديو إذا لم يبدأ تلقائياً."));
+   }catch(e){tryDirect(s);}
+ } else {tryDirect(s);}
+ render();
+}
+function tryDirect(s){
+ video.src=s.url;video.load();
+ video.play().then(()=>setStatus("تم إرسال أمر التشغيل. إذا بقيت الشاشة سوداء فقد لا يدعم المتصفح صيغة البث.","ok"))
+ .catch(()=>setStatus("لم يبدأ التشغيل تلقائياً. اضغط تشغيل داخل الفيديو أو جرّب رابطاً آخر.","error"));
+}
+$("playBtn").onclick=playSelected;
+$("stopBtn").onclick=()=>{destroyPlayer();$("placeholder").style.display="flex";setStatus("تم إيقاف التشغيل.");$("format").textContent="متوقف";};
+$("openBtn").onclick=()=>{const s=streams[selected];window.open(s.url,"_blank","noopener");};
+$("copyBtn").onclick=async()=>{try{await navigator.clipboard.writeText(streams[selected].url);setStatus("تم نسخ الرابط.");}catch(e){setStatus("تعذر النسخ التلقائي. الرابط ظاهر أسفل اسم البث؛ انسخه يدوياً.","error");}};
+$("search").addEventListener("input",render);
+document.querySelectorAll(".group").forEach(b=>b.onclick=()=>{group=b.dataset.group;document.querySelectorAll(".group").forEach(x=>x.classList.toggle("active",x===b));render();});
+video.addEventListener("error",()=>setStatus("خطأ في تشغيل المصدر. الأسباب المحتملة: الرابط غير متاح، صيغة غير مدعومة، CORS، أو حظر HTTP داخل HTTPS.","error"));
+render();
+</script>
+</body>
+</html>
